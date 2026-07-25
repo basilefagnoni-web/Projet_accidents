@@ -2,7 +2,7 @@ import streamlit as st
 import os
 import gdown
 
-from generator import (
+from Generation_accident import (
     generer_accident,
     SECU_MAPPING,
     COLLISION_MAPPING,
@@ -10,7 +10,7 @@ from generator import (
     OBSM_MAPPING
 )
 
-from predict import predict_gravite
+from Prediction_gravite import predict_gravite
 
 MODEL_URL = "https://drive.google.com/uc?id=1Ogz0_I2gGtWgRaeeU0JkapgROe5lYcR5"
 PIPELINE_URL = "https://drive.google.com/uc?id=1yxYFA2fVwvSc-epAMw50POyz7x0kse0E"
