@@ -3,9 +3,10 @@ import pandas as pd
 
 st.title(" Analyse des données d'accidents")
 
-df = pd.read_csv("data/accidents.csv")
+# Lire le ZIP présent dans ton GitHub
+df = pd.read_csv("data/accidents_France_encoded.zip")
 
-st.subheader("Aperçu des données")
+st.write("Aperçu des données :")
 st.dataframe(df.head())
 
 st.subheader("Statistiques générales")
