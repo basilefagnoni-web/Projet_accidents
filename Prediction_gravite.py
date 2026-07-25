@@ -1,14 +1,11 @@
-import joblib
 import pandas as pd
 
-MODEL_BIN_PATH = "models/modele_r6.pkl"
-MODEL_GRAVE_PATH = "models/pipeline_grave.pkl"
-
-# Charger les modèles
-modele_r6 = joblib.load(MODEL_BIN_PATH)
-pipeline_grave = joblib.load(MODEL_GRAVE_PATH)
-
-def predict_gravite(df):
+def predict_gravite(df, modele_r6, pipeline_grave):
+    """
+    df : DataFrame contenant les mêmes colonnes que X_train
+    modele_r6 : modèle binaire (grave / non grave)
+    pipeline_grave : pipeline pour prédire hospitalisé / tué
+    """
 
     # 1. Prédiction grave / non grave
     proba_grave = modele_r6.predict_proba(df)[:, 1]
