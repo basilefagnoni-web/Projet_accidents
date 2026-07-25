@@ -1,4 +1,6 @@
 import streamlit as st
+import os
+import gdown
 
 from generator import (
     generer_accident,
@@ -10,23 +12,24 @@ from generator import (
 
 from predict import predict_gravite
 
-import gdown
-import os
+MODEL_URL = "https://drive.google.com/uc?id=1Ogz0_I2gGtWgRaeeU0JkapgROe5lYcR5"
+PIPELINE_URL = "https://drive.google.com/uc?id=1yxYFA2fVwvSc-epAMw50POyz7x0kse0E"
 
-# Télécharger les modèles
-os.makedirs("models", exist_ok=True)
+def download_models():
+    os.makedirs("models", exist_ok=True)
 
-gdown.download(
-    "https://drive.google.com/uc?id=1Ogz0_I2gGtWgRaeeU0JkapgROe5lYcR5",
-    "models/modele_r6.pkl",
-    quiet=False
-)
+    if not os.path.exists("models/modele_r6.pkl"):
+        gdown.download(MODEL_URL, "models/modele_r6.pkl", quiet=False)
 
-gdown.download(
-    "https://drive.google.com/uc?id=1yxYFA2fVwvSc-epAMw50POyz7x0kse0E",
-    "models/pipeline_grave.pkl",
-    quiet=False
-)
+    if not os.path.exists("models/pipeline_grave.pkl"):
+        gdown.download(PIPELINE_URL, "models/pipeline_grave.pkl", quiet=False)
+
+@st.cache_resource
+def load_predictor():
+    download_models()
+    return predict_gravite
+
+predict_fn = load_predictor()
 
 st.title("Prédiction de gravité d'accident")
 
@@ -38,7 +41,7 @@ age = st.slider("Âge", 14, 99, 40)
 
 if st.button("Prédire"):
     accident = generer_accident(secu, collision, age, manoeuvre, obstacle_mobile)
-    result = predict_gravite(accident)
+    result = predict_fn(accident)
 
     st.write("Gravité :", result["gravite_binaire"][0])
     st.write("Détail :", result["gravite_detaillee"][0])
