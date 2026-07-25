@@ -5,7 +5,7 @@ from imblearn.ensemble import BalancedRandomForestClassifier
 import joblib
 
 BASE_DIR = os.getcwd()
-DATA_DIR = os.path.join(BASE_DIR, "outputs")
+DATA_DIR = os.path.join(BASE_DIR, "data")
 MODEL_PATH = os.path.join(BASE_DIR, "models", "model_r6.pkl")
 
 def binariser(y):
@@ -13,8 +13,8 @@ def binariser(y):
     return np.where(np.isin(y, [1,4]), 0, 1)
 
 def train_model():
-    X_train = pd.read_csv(os.path.join(DATA_DIR,"X_train.csv"))
-    y_train = pd.read_csv(os.path.join(DATA_DIR,"y_train.csv"))
+    X_train = pd.read_csv(os.path.join(DATA_DIR,"X_train.zip"))
+    y_train = pd.read_csv(os.path.join(DATA_DIR,"y_train.zip"))
     y_train_bin = binariser(y_train)
 
     model = BalancedRandomForestClassifier(
@@ -34,7 +34,7 @@ def load_model():
     return joblib.load(MODEL_PATH)
 
 def load_columns():
-    return pd.read_csv(os.path.join(DATA_DIR,"X_train.csv")).columns
+    return pd.read_csv(os.path.join(DATA_DIR,"X_train.zip")).columns
 
 def predict_gravity(inputs: dict):
     model = load_model()
