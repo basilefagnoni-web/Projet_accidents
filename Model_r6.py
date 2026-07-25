@@ -36,9 +36,9 @@ y_test_bin  = binariser(y_test_clean)
 
 # Modèle r6
 modele_r6 = BalancedRandomForestClassifier(
-    n_estimators=300,
-    max_depth=20,
-    min_samples_split=2,
+    n_estimators=80,        # au lieu de 300
+    max_depth=12,          # au lieu de 20
+    min_samples_split=4,
     sampling_strategy=1.0,
     random_state=42,
     n_jobs=-1
@@ -57,10 +57,10 @@ y_train_graves = y_train_clean.loc[mask_train_graves].map({2:1, 3:0})
 y_test_graves  = y_test_clean.loc[mask_test_graves].map({2:1, 3:0})
 
 pipeline_grave = Pipeline([
-    ("smote", SMOTE(sampling_strategy=0.8, random_state=42)),
+    ("smote", SMOTE(sampling_strategy=0.5, random_state=42)),
     ("rf", RandomForestClassifier(
-        n_estimators=300,
-        max_depth=20,
+        n_estimators=80,    # au lieu de 300
+        max_depth=12,
         class_weight={0:1, 1:10},
         random_state=42,
         n_jobs=-1
