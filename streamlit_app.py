@@ -66,3 +66,4 @@ if st.button("Prédire"):
     st.subheader("Résultat de la prédiction")
     st.write("Gravité :", result["gravite_binaire"][0])
     st.write("Détail :", result["gravite_detaillee"][0])
+
