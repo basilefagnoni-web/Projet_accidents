@@ -1,6 +1,32 @@
 import streamlit as st
-from generator import generer_accident
+
+from generator import (
+    generer_accident,
+    SECU_MAPPING,
+    COLLISION_MAPPING,
+    MANOEUVRE_MAPPING,
+    OBSM_MAPPING
+)
+
 from predict import predict_gravite
+
+import gdown
+import os
+
+# Télécharger les modèles
+os.makedirs("models", exist_ok=True)
+
+gdown.download(
+    "https://drive.google.com/uc?id=1Ogz0_I2gGtWgRaeeU0JkapgROe5lYcR5",
+    "models/modele_r6.pkl",
+    quiet=False
+)
+
+gdown.download(
+    "https://drive.google.com/uc?id=1yxYFA2fVwvSc-epAMw50POyz7x0kse0E",
+    "models/pipeline_grave.pkl",
+    quiet=False
+)
 
 st.title("Prédiction de gravité d'accident")
 
