@@ -1,8 +1,8 @@
 import streamlit as st
 import os
 import gdown
-import pandas as pd
 import joblib
+import pandas as pd
 
 from Generation_accident import (
     generer_accident,
@@ -16,10 +16,10 @@ from Prediction_gravite import predict_gravite
 
 
 # -----------------------------
-# 1) Téléchargement des modèles
+# Téléchargement des modèles
 # -----------------------------
-MODEL_URL = "https://drive.google.com/uc?id=1Ogz0_I2gGtWgRaeeU0JkapgROe5lYcR5"
-PIPELINE_URL = "https://drive.google.com/uc?id=1yxYFA2fVwvSc-epAMw50POyz7x0kse0E"
+MODEL_URL = "https://drive.google.com/uc?id=TON_ID_MODELE"
+PIPELINE_URL = "https://drive.google.com/uc?id=TON_ID_PIPELINE"
 
 def download_models():
     os.makedirs("models", exist_ok=True)
@@ -32,7 +32,7 @@ def download_models():
 
 
 # -----------------------------
-# 2) Chargement des modèles (cache)
+# Chargement des modèles (cache)
 # -----------------------------
 @st.cache_resource
 def load_models():
@@ -46,9 +46,9 @@ modele_r6, pipeline_grave = load_models()
 
 
 # -----------------------------
-# 3) Interface Streamlit
+# Interface Streamlit
 # -----------------------------
-st.title("🚗 Prédiction de gravité d'accident")
+st.title(" Prédiction de gravité d'accident")
 
 secu = st.selectbox("Sécurité", list(SECU_MAPPING.keys()))
 collision = st.selectbox("Collision", list(COLLISION_MAPPING.keys()))
@@ -57,13 +57,10 @@ obstacle_mobile = st.selectbox("Obstacle mobile", list(OBSM_MAPPING.keys()))
 age = st.slider("Âge", 14, 99, 40)
 
 if st.button("Prédire"):
-    # Générer un accident → dictionnaire
-    accident_dict = generer_accident(secu, collision, age, manoeuvre, obstacle_mobile)
+    #  Ici : generer_accident renvoie déjà un DataFrame prêt pour le modèle
+    df_accident = generer_accident(secu, collision, age, manoeuvre, obstacle_mobile)
 
-    # Convertir en DataFrame pour le modèle
-    df_accident = pd.DataFrame([accident_dict])
-
-    # Prédire
+    # Prédiction
     result = predict_gravite(df_accident, modele_r6, pipeline_grave)
 
     st.subheader("Résultat de la prédiction")
