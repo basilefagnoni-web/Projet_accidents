@@ -1,23 +1,18 @@
 import streamlit as st
-import pandas as pd
-from Code_complet import load_columns, predict_gravity
+from generator import generer_accident
+from predict import predict_gravite
 
-st.title(" Prédiction de la gravité d’un accident de la route")
+st.title("Prédiction de gravité d'accident")
 
-cols = load_columns()
-inputs = {}
+secu = st.selectbox("Sécurité", list(SECU_MAPPING.keys()))
+collision = st.selectbox("Collision", list(COLLISION_MAPPING.keys()))
+manoeuvre = st.selectbox("Manœuvre", list(MANOEUVRE_MAPPING.keys()))
+obstacle_mobile = st.selectbox("Obstacle mobile", list(OBSM_MAPPING.keys()))
+age = st.slider("Âge", 14, 99, 40)
 
-st.header(" Décris un accident")
+if st.button("Prédire"):
+    accident = generer_accident(secu, collision, age, manoeuvre, obstacle_mobile)
+    result = predict_gravite(accident)
 
-for col in cols:
-    if "encoded" in col or col.startswith(("secu","obs","choc","meteo","route")):
-        inputs[col] = st.slider(col, 0.0, 5.0, 2.5)
-    elif col.startswith(("is_","categorie_usager","type_vehicule_simplifie")):
-        inputs[col] = st.selectbox(col, [0,1])
-    else:
-        inputs[col] = st.number_input(col, value=0.0)
-
-if st.button(" Prédire"):
-    pred = predict_gravity(inputs)
-    label = "Grave" if pred == 1 else "Non grave"
-    st.metric("Gravité prédite", label)
+    st.write("Gravité :", result["gravite_binaire"][0])
+    st.write("Détail :", result["gravite_detaillee"][0])
