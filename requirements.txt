@@ -1,3 +1,7 @@
 pandas
 category_encoders
 scikit-learn
+imbalanced-learn
+joblib
+streamlit
+xgboost
