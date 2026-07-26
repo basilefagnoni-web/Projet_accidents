@@ -19,7 +19,7 @@ def charger_donnees_test():
 
 @st.cache_resource
 def charger_modele_r6():
-    url_r6 = "https://drive.google.com/uc?id=1Ogz0_I2gGtWgRaeeU0JkapgROe5lYcR5"
+    url_r6 = "https://drive.google.com/uc?id=1dpKuBp7k4jmJY2q0S8X964SJaM1JsRsn"
     local_path = "models/modele_r6.pkl"
 
     os.makedirs("models", exist_ok=True)
