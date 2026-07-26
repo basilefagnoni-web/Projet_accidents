@@ -1,21 +1,23 @@
 import streamlit as st
 import pandas as pd
-import numpy as np 
+import numpy as np
 import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
+import gdown
+import os
 from sklearn.metrics import (
     accuracy_score, f1_score, roc_auc_score,
     ConfusionMatrixDisplay
 )
 
+# ============================================================
+# Chargement des données (cache)
+# ============================================================
+
 @st.cache_data
 def charger_donnees():
     return pd.read_csv("data/accidents_France_encoded.zip")
-
-@st.cache_resource
-def charger_modele(path):
-    return joblib.load(path)
 
 df = charger_donnees()
 X = df.drop(columns=["gravite"])
@@ -26,22 +28,51 @@ def binariser(y):
 
 y_bin = binariser(y)
 
-st.title("🤖 Comparaison des modèles pré‑entraînés")
+# ============================================================
+# Téléchargement Drive uniquement pour modele_r6.pkl
+# ============================================================
+
+drive_urls = {
+    "Balanced Random Forest": "https://drive.google.com/uc?id=ID_R6"
+}
+
+@st.cache_resource
+def charger_modele(path, nom):
+    # Cas particulier : modèle r6 sur Google Drive
+    if nom == "Balanced Random Forest":
+        url = drive_urls[nom]
+        os.makedirs("models", exist_ok=True)
+        if not os.path.exists(path):
+            gdown.download(url, path, quiet=False)
+        return joblib.load(path)
+
+    # Cas général : modèles locaux
+    return joblib.load(path)
+
+# ============================================================
+# Définition des modèles pré‑entraînés
+# ============================================================
 
 model_paths = {
     "Dummy": "models/modele_dummy.pkl",
     "Régression logistique": "models/modele_lr.pkl",
     "Decision Tree": "models/modele_dt.pkl",
     "XGBoost": "models/modele_xgb.pkl",
-    "Balanced Random Forest": "models/modele_brf.pkl"
+    "Balanced Random Forest": "models/modele_r6.pkl"   # r6 = BRF optimisé
 }
+
+# ============================================================
+# Interface Streamlit
+# ============================================================
+
+st.title("Comparaison des modèles pré‑entraînés")
 
 resultats = []
 
 for nom, path in model_paths.items():
-    st.subheader(f"🔍 {nom}")
+    st.subheader(f"{nom}")
 
-    modele = charger_modele(path)
+    modele = charger_modele(path, nom)
     y_pred = modele.predict(X)
     y_proba = modele.predict_proba(X)[:, 1]
 
@@ -67,7 +98,7 @@ for nom, path in model_paths.items():
     st.pyplot(fig)
 
 df_scores = pd.DataFrame(resultats)
-st.subheader("📋 Tableau comparatif")
+st.subheader("Tableau comparatif")
 st.dataframe(df_scores)
 
 fig, ax = plt.subplots(figsize=(10, 5))
