@@ -8,7 +8,7 @@ import gdown
 import os
 from sklearn.metrics import (
     accuracy_score, f1_score, roc_auc_score,
-    ConfusionMatrixDisplay
+    ConfusionMatrixDisplay, classification_report
 )
 
 # ============================================================
@@ -41,7 +41,6 @@ drive_urls = {
 
 @st.cache_resource
 def charger_modele(path, nom):
-    # Cas particulier : modèle r6 sur Google Drive
     if nom == "Balanced Random Forest":
         url = drive_urls[nom]
         os.makedirs("models", exist_ok=True)
@@ -49,7 +48,6 @@ def charger_modele(path, nom):
             gdown.download(url, path, quiet=False)
         return joblib.load(path)
 
-    # Cas général : modèles locaux
     return joblib.load(path)
 
 # ============================================================
@@ -61,7 +59,7 @@ model_paths = {
     "Régression logistique": "models/modele_lr.pkl",
     "Decision Tree": "models/modele_dt.pkl",
     "XGBoost": "models/modele_xgb.pkl",
-    "Balanced Random Forest": "models/modele_r6.pkl"   # r6 = BRF optimisé
+    "Balanced Random Forest": "models/modele_r6.pkl"
 }
 
 # ============================================================
@@ -80,22 +78,20 @@ for nom, path in model_paths.items():
     y_proba = modele.predict_proba(X)[:, 1]
 
     acc = accuracy_score(y_bin, y_pred)
-f1 = f1_score(y_bin, y_pred)
-auc = roc_auc_score(y_bin, y_proba)
+    f1 = f1_score(y_bin, y_pred)
+    auc = roc_auc_score(y_bin, y_proba)
 
-# Calcul du recall grave (classe 1)
-recall_grave = classification_report(
-    y_bin, y_pred, output_dict=True
-)["1"]["recall"]
+    recall_grave = classification_report(
+        y_bin, y_pred, output_dict=True
+    )["1"]["recall"]
 
-resultats.append({
-    "Modèle": nom,
-    "Accuracy": acc,
-    "F1-score": f1,
-    "AUC": auc,
-    "Recall grave": recall_grave
-})
-
+    resultats.append({
+        "Modèle": nom,
+        "Accuracy": acc,
+        "F1-score": f1,
+        "AUC": auc,
+        "Recall grave": recall_grave
+    })
 
     fig, ax = plt.subplots(figsize=(5, 4))
     ConfusionMatrixDisplay.from_predictions(
@@ -108,6 +104,7 @@ resultats.append({
     st.pyplot(fig)
 
 df_scores = pd.DataFrame(resultats)
+
 st.subheader("Tableau comparatif")
 st.dataframe(df_scores)
 
@@ -127,13 +124,11 @@ st.pyplot(fig)
 
 st.subheader("Synthèse comparative — Modèle binaire grave / non grave")
 
-# Tri sur Recall grave (comme dans ton script d'origine)
 synthese = df_scores.sort_values("Recall grave", ascending=False)
 
 st.write("Classement des modèles (du meilleur Recall grave au moins bon) :")
 st.dataframe(synthese)
 
-# Visualisation synthèse
 fig, axes = plt.subplots(1, 4, figsize=(22, 5))
 metriques = ["Accuracy", "F1-score", "AUC", "Recall grave"]
 
@@ -151,5 +146,3 @@ for ax, metrique in zip(axes, metriques):
 
 plt.tight_layout()
 st.pyplot(fig)
-
-
