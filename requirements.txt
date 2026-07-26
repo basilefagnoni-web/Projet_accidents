@@ -6,3 +6,7 @@ joblib
 streamlit
 xgboost
 gdown
+seaborn
+numpy
+matplotlib
+plotly
