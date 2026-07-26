@@ -80,15 +80,22 @@ for nom, path in model_paths.items():
     y_proba = modele.predict_proba(X)[:, 1]
 
     acc = accuracy_score(y_bin, y_pred)
-    f1 = f1_score(y_bin, y_pred)
-    auc = roc_auc_score(y_bin, y_proba)
+f1 = f1_score(y_bin, y_pred)
+auc = roc_auc_score(y_bin, y_proba)
 
-    resultats.append({
-        "Modèle": nom,
-        "Accuracy": acc,
-        "F1-score": f1,
-        "AUC": auc
-    })
+# Calcul du recall grave (classe 1)
+recall_grave = classification_report(
+    y_bin, y_pred, output_dict=True
+)["1"]["recall"]
+
+resultats.append({
+    "Modèle": nom,
+    "Accuracy": acc,
+    "F1-score": f1,
+    "AUC": auc,
+    "Recall grave": recall_grave
+})
+
 
     fig, ax = plt.subplots(figsize=(5, 4))
     ConfusionMatrixDisplay.from_predictions(
