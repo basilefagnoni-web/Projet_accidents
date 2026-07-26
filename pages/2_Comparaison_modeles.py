@@ -15,18 +15,21 @@ from sklearn.metrics import (
 # Chargement des données (cache)
 # ============================================================
 
-@st.cache_data
-def charger_donnees():
-    return pd.read_csv("data/accidents_France_encoded.zip")
+DATA_DIR = "data"
 
-df = charger_donnees()
-X = df.drop(columns=["gravite"])
-y = df["gravite"]
+@st.cache_data
+def charger_test():
+    X_test = pd.read_csv(os.path.join(DATA_DIR, "X_test.zip"))
+    y_test = pd.read_csv(os.path.join(DATA_DIR, "y_test.zip"))
+    return X_test, y_test
+
+X, y = charger_test()
 
 def binariser(y):
     return np.where(np.isin(y, [1, 4]), 0, 1)
 
-y_bin = binariser(y)
+y_bin = binariser(y.values.ravel())
+
 
 # ============================================================
 # Téléchargement Drive uniquement pour modele_r6.pkl
@@ -110,3 +113,35 @@ df_scores.set_index("Modèle")[["Accuracy", "F1-score", "AUC"]].plot(
 ax.set_ylim(0, 1)
 ax.set_title("Comparaison des métriques")
 st.pyplot(fig)
+
+# ============================================================
+# Synthèse comparative (triée sur F1-score ou AUC)
+# ============================================================
+
+st.subheader("Synthèse comparative — Modèle binaire grave / non grave")
+
+# Tri sur F1-score (tu peux changer pour 'AUC' si tu préfères)
+synthese = df_scores.sort_values("F1-score", ascending=False)
+
+st.write("Classement des modèles (du meilleur F1-score au moins bon) :")
+st.dataframe(synthese)
+
+# Visualisation synthèse
+fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+metriques = ["Accuracy", "F1-score", "AUC"]
+
+for ax, metrique in zip(axes, metriques):
+    sns.barplot(
+        data=synthese, x=metrique, y="Modèle",
+        palette="viridis", ax=ax
+    )
+    ax.set_xlim(0, 1)
+    ax.set_title(metrique)
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+    for container in ax.containers:
+        ax.bar_label(container, fmt="%.3f", padding=3, fontsize=9)
+
+plt.tight_layout()
+st.pyplot(fig)
+

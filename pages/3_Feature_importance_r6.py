@@ -6,12 +6,12 @@ import gdown
 import os
 
 # ============================================================
-# Chargement des données (cache)
+# Chargement des données test (cache)
 # ============================================================
 
 @st.cache_data
-def charger_donnees():
-    return pd.read_csv("data/accidents_France_encoded.zip")
+def charger_donnees_test():
+    return pd.read_csv("data/X_test.zip")
 
 # ============================================================
 # Téléchargement Drive + cache pour modele_r6.pkl
@@ -19,30 +19,23 @@ def charger_donnees():
 
 @st.cache_resource
 def charger_modele_r6():
-    # URL Google Drive (remplace ID_R6 par ton vrai ID)
     url_r6 = "https://drive.google.com/uc?id=1Ogz0_I2gGtWgRaeeU0JkapgROe5lYcR5"
-
-    # Chemin local du modèle
     local_path = "models/modele_r6.pkl"
 
-    # Création du dossier si nécessaire
     os.makedirs("models", exist_ok=True)
 
-    # Téléchargement uniquement si le fichier n'existe pas
     if not os.path.exists(local_path):
         gdown.download(url_r6, local_path, quiet=False)
 
-    # Chargement du modèle
     return joblib.load(local_path)
 
 # ============================================================
 # Chargement des données + modèle
 # ============================================================
 
-df = charger_donnees()
+X = charger_donnees_test()
 modele_r6 = charger_modele_r6()
 
-X = df.drop(columns=["gravite"])
 features = X.columns
 importances = modele_r6.feature_importances_
 
