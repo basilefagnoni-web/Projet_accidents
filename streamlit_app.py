@@ -19,7 +19,7 @@ from Prediction_gravite import predict_gravite
 # -----------------------------
 # Téléchargement des modèles
 # -----------------------------
-MODEL_URL = "https://drive.google.com/uc?id=1Ogz0_I2gGtWgRaeeU0JkapgROe5lYcR5"
+MODEL_URL = "https://drive.google.com/uc?id=1dpKuBp7k4jmJY2q0S8X964SJaM1JsRsn"
 PIPELINE_URL = "https://drive.google.com/uc?id=1yxYFA2fVwvSc-epAMw50POyz7x0kse0E"
 
 def download_models():
