@@ -115,20 +115,20 @@ ax.set_title("Comparaison des métriques")
 st.pyplot(fig)
 
 # ============================================================
-# Synthèse comparative (triée sur F1-score ou AUC)
+# Synthèse comparative (triée sur Recall grave)
 # ============================================================
 
 st.subheader("Synthèse comparative — Modèle binaire grave / non grave")
 
-# Tri sur F1-score (tu peux changer pour 'AUC' si tu préfères)
-synthese = df_scores.sort_values("F1-score", ascending=False)
+# Tri sur Recall grave (comme dans ton script d'origine)
+synthese = df_scores.sort_values("Recall grave", ascending=False)
 
-st.write("Classement des modèles (du meilleur F1-score au moins bon) :")
+st.write("Classement des modèles (du meilleur Recall grave au moins bon) :")
 st.dataframe(synthese)
 
 # Visualisation synthèse
-fig, axes = plt.subplots(1, 3, figsize=(18, 5))
-metriques = ["Accuracy", "F1-score", "AUC"]
+fig, axes = plt.subplots(1, 4, figsize=(22, 5))
+metriques = ["Accuracy", "F1-score", "AUC", "Recall grave"]
 
 for ax, metrique in zip(axes, metriques):
     sns.barplot(
@@ -144,4 +144,5 @@ for ax, metrique in zip(axes, metriques):
 
 plt.tight_layout()
 st.pyplot(fig)
+
 
