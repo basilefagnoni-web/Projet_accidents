@@ -20,7 +20,7 @@ def charger_donnees():
 @st.cache_resource
 def charger_modele_r6():
     # URL Google Drive (remplace ID_R6 par ton vrai ID)
-    url_r6 = "https://drive.google.com/uc?id=ID_R6"
+    url_r6 = "https://drive.google.com/uc?id=1Ogz0_I2gGtWgRaeeU0JkapgROe5lYcR5"
 
     # Chemin local du modèle
     local_path = "models/modele_r6.pkl"
