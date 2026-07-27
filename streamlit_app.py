@@ -15,35 +15,10 @@ from Generation_accident import (
 
 from Prediction_gravite import predict_gravite
 
-
 # -----------------------------
-# Téléchargement des modèles
+# Chargement des modèles (nouveau)
 # -----------------------------
-MODEL_URL = "https://drive.google.com/uc?id=1BEWt3Aphz-_xiftmqVlty18rRMNTvIcM"
-PIPELINE_URL = "https://drive.google.com/uc?id=1ztGBGcuegiJ3BvsPnUrXo-x4449C9tjr"
-
-def download_models():
-    os.makedirs("models", exist_ok=True)
-
-    if not os.path.exists("models/modele_r6.pkl"):
-        gdown.download(MODEL_URL, "models/modele_r6.pkl", quiet=False)
-
-    if not os.path.exists("models/pipeline_grave.pkl"):
-        gdown.download(PIPELINE_URL, "models/pipeline_grave.pkl", quiet=False)
-
-
-# -----------------------------
-# Chargement des modèles (cache)
-# -----------------------------
-@st.cache_resource
-def load_models():
-    download_models()
-    modele_r6 = joblib.load("models/modele_r6.pkl")
-    pipeline_grave = joblib.load("models/pipeline_grave.pkl")
-    return modele_r6, pipeline_grave
-
-
-modele_r6, pipeline_grave = load_models()
+from models_loader import modele_r6, pipeline_grave
 
 
 # -----------------------------

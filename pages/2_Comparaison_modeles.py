@@ -8,8 +8,8 @@ from sklearn.metrics import (
     ConfusionMatrixDisplay, classification_report
 )
 
-# On importe les modèles déjà chargés dans streamlit_app.py
-from streamlit_app import modele_r6, pipeline_grave
+# On importe les modèles déjà chargés dans models_loader.py
+from models_loader import modele_r6, pipeline_grave
 
 DATA_DIR = "data"
 

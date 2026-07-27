@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# On importe le modèle déjà chargé dans streamlit_app.py
-from streamlit_app import modele_r6
+# On importe le modèle déjà chargé dans models_loader.py
+from models_loader import modele_r6
 
 @st.cache_data
 def charger_donnees_test():
