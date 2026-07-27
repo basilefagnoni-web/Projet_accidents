@@ -86,15 +86,7 @@ st.caption(
 )
 
 with st.spinner("Chargement des modèles de comparaison..."):
-    modele_dummy, modele_lr, modele_dt, modele_xgb = load_comparison_models()
-
-modeles_grave = {
-    "Dummy (most_frequent)": modele_dummy,
-    "Régression logistique": modele_lr,
-    "Decision Tree": modele_dt,
-    "XGBoost": modele_xgb,
-    "Balanced Random Forest (modele_r6 - retenu)": modele_r6,
-}
+    modeles_grave = load_all_models()   # <-- NOUVEAU
 
 resultats_grave = []
 for nom, modele in modeles_grave.items():
