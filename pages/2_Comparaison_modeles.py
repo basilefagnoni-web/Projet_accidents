@@ -1,26 +1,22 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
-import gdown
-import os
 from sklearn.metrics import (
     accuracy_score, f1_score, roc_auc_score,
     ConfusionMatrixDisplay, classification_report
 )
 
-# ============================================================
-# Chargement des données (cache)
-# ============================================================
+# On importe les modèles déjà chargés dans streamlit_app.py
+from streamlit_app import modele_r6, pipeline_grave
 
 DATA_DIR = "data"
 
 @st.cache_data
 def charger_test():
-    X_test = pd.read_csv(os.path.join(DATA_DIR, "X_test.zip"))
-    y_test = pd.read_csv(os.path.join(DATA_DIR, "y_test.zip"))
+    X_test = pd.read_csv(f"{DATA_DIR}/X_test.zip")
+    y_test = pd.read_csv(f"{DATA_DIR}/y_test.zip")
     return X_test, y_test
 
 X, y = charger_test()
@@ -30,50 +26,19 @@ def binariser(y):
 
 y_bin = binariser(y.values.ravel())
 
-
-# ============================================================
-# Téléchargement Drive uniquement pour modele_r6.pkl
-# ============================================================
-
-drive_urls = {
-    "Balanced Random Forest": "https://drive.google.com/uc?id=1BEWt3Aphz-_xiftmqVlty18rRMNTvIcM"
+# On garde les mêmes noms de modèles
+modeles = {
+    "Balanced Random Forest": modele_r6,
+    "Pipeline Grave": pipeline_grave
 }
-
-@st.cache_resource
-def charger_modele(path, nom):
-    if nom == "Balanced Random Forest":
-        url = drive_urls[nom]
-        os.makedirs("models", exist_ok=True)
-        if not os.path.exists(path):
-            gdown.download(url, path, quiet=False)
-        return joblib.load(path)
-
-    return joblib.load(path)
-
-# ============================================================
-# Définition des modèles pré‑entraînés
-# ============================================================
-
-model_paths = {
-    "Dummy": "models/modele_dummy.pkl",
-    "Régression logistique": "models/modele_lr.pkl",
-    "Decision Tree": "models/modele_dt.pkl",
-    "XGBoost": "models/modele_xgb.pkl",
-    "Balanced Random Forest": "models/modele_r6.pkl"
-}
-
-# ============================================================
-# Interface Streamlit
-# ============================================================
 
 st.title("Comparaison des modèles pré‑entraînés")
 
 resultats = []
 
-for nom, path in model_paths.items():
+for nom, modele in modeles.items():
     st.subheader(f"{nom}")
 
-    modele = charger_modele(path, nom)
     y_pred = modele.predict(X)
     y_proba = modele.predict_proba(X)[:, 1]
 
@@ -118,15 +83,9 @@ ax.set_ylim(0, 1)
 ax.set_title("Comparaison des métriques")
 st.pyplot(fig)
 
-# ============================================================
-# Synthèse comparative (triée sur Recall grave)
-# ============================================================
-
 st.subheader("Synthèse comparative — Modèle binaire grave / non grave")
 
 synthese = df_scores.sort_values("Recall grave", ascending=False)
-
-st.write("Classement des modèles (du meilleur Recall grave au moins bon) :")
 st.dataframe(synthese)
 
 fig, axes = plt.subplots(1, 4, figsize=(22, 5))
