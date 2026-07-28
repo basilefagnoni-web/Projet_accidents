@@ -9,36 +9,33 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 X_train = pd.read_csv(os.path.join(DATA_DIR, "X_train.zip"))
 
 SECU_MAPPING = {
-    "Ceinture": 2.2,
-    "Casque": 2.7,
-    "Dispositif enfants": 2.9,
-    "Gilet réfléchissant": 2.4,
-    "Airbag (2RM/3RM)": 2.8,
-    "Gants (2RM/3RM)": 2.5,
-    "Gants + Airbag (2RM/3RM)": 2.9
+    "Ceinture": 2.146,
+    "Casque": 3.371,
+    "Dispositif enfants": 2.447,
+    "Gilet réfléchissant": 2.906,
+    "Airbag (2RM/3RM)": 2.726,
+    "Gants (2RM/3RM)": 3.089,
+    "Gants + Airbag (2RM/3RM)": 2.764,
 }
 COLLISION_MAPPING = {
-    "Frontale": 2.7,
-    "Latérale": 2.5,
-    "Arrière": 2.3,
-    "Multiple": 2.8,
-    "Autre": 2.4
+    "Frontale": 2.612,
+    "Latérale": 2.467,
+    "Arrière": 2.495,
+    "Multiple": 2.249,
+    "Autre": 2.878,
 }
 MANOEUVRE_MAPPING = {
-    "Dépassement": 2.6,
-    "Changement de voie": 2.5,
-    "Virage": 2.4,
-    "Freinage": 2.3,
-    "Stationnement": 2.1,
-    "Autre": 2.2
+    "Dépassement": 3.016,
+    "Changement de voie": 2.632,
+    "Virage": 2.083,
+    "Stationnement": 2.088,
+    "Autre": 2.504,
 }
 OBSM_MAPPING = {
-    "Véhicule": 2.5,
-    "Piéton": 2.7,
-    "Cycliste": 2.6,
-    "Animal": 2.3,
-    "Objet": 2.2,
-    "Autre": 2.4
+    "Véhicule": 2.772,
+    "Piéton": 2.402,
+    "Animal": 2.849,
+    "Autre": 1.650,
 }
 OBS_FIXE_MAPPING = {
     "Aucun obstacle": 2.688,
