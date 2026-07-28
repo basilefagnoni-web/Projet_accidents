@@ -5,7 +5,7 @@ import numpy as np
 BASE_DIR = os.getcwd()
 DATA_DIR = os.path.join(BASE_DIR, "data")
 
-# Charger X_train.zip pour récupérer les colonnes
+# Charger X_train.zip pour récupérer les colonnes ET les vraies distributions
 X_train = pd.read_csv(os.path.join(DATA_DIR, "X_train.zip"))
 
 SECU_MAPPING = {
@@ -17,7 +17,6 @@ SECU_MAPPING = {
     "Gants (2RM/3RM)": 2.5,
     "Gants + Airbag (2RM/3RM)": 2.9
 }
-
 COLLISION_MAPPING = {
     "Frontale": 2.7,
     "Latérale": 2.5,
@@ -25,7 +24,6 @@ COLLISION_MAPPING = {
     "Multiple": 2.8,
     "Autre": 2.4
 }
-
 MANOEUVRE_MAPPING = {
     "Dépassement": 2.6,
     "Changement de voie": 2.5,
@@ -34,7 +32,6 @@ MANOEUVRE_MAPPING = {
     "Stationnement": 2.1,
     "Autre": 2.2
 }
-
 OBSM_MAPPING = {
     "Véhicule": 2.5,
     "Piéton": 2.7,
@@ -43,32 +40,50 @@ OBSM_MAPPING = {
     "Objet": 2.2,
     "Autre": 2.4
 }
+OBS_FIXE_MAPPING = {
+    "Aucun obstacle": 2.688,
+    "Véhicule en stationnement": 2.875,
+    "Arbre": 2.890,
+    "Glissière / séparateur de voie": 3.037,
+    "Bâtiment / mobilier urbain": 2.960,
+    "Obstacle de bord de chaussée": 2.967,
+}
 
-def generer_accident(secu, collision, age, manoeuvre, obstacle_mobile):
+# Colonnes gérées explicitement ailleurs (binaires, catégorielles ordinales,
+# one-hot) : on ne veut PAS les tirer depuis X_train pour celles-ci, elles
+# ont leur propre logique dédiée plus bas.
+COLONNES_BINAIRES = ["localisation_agglo", "luminosite", "is_weekend", "is_ferie", "sexe_encoded"]
+COLONNE_HORAIRE = "tranche_horaire_ord"
+PREFIXES_ONE_HOT = ("categorie_usager_", "type_vehicule_simplifie_")
 
+
+def generer_accident(secu, collision, age, manoeuvre, obstacle_mobile, vitesse_max, obs_fixe):
     accident = {
         "secu_encoded": SECU_MAPPING[secu],
         "collision_encoded": COLLISION_MAPPING[collision],
         "age_usager": age,
         "manoeuvre_encoded": MANOEUVRE_MAPPING[manoeuvre],
         "obsm_encoded": OBSM_MAPPING[obstacle_mobile],
+        "vitesse_max": vitesse_max,
+        "obs_fixe_encoded": OBS_FIXE_MAPPING[obs_fixe],
     }
 
     # Génération aléatoire pour toutes les autres colonnes
     for col in X_train.columns:
-        if col not in accident:
-
-            if col in ["localisation_agglo", "luminosite", "is_weekend", "is_ferie", "sexe_encoded"]:
-                accident[col] = np.random.choice([0, 1])
-
-            elif col == "tranche_horaire_ord":
-                accident[col] = np.random.choice([1, 2, 3, 4])
-
-            elif col.startswith("categorie_usager_") or col.startswith("type_vehicule_simplifie_"):
-                accident[col] = 0
-
-            else:
-                accident[col] = np.random.uniform(2.2, 2.8)
+        if col in accident:
+            continue
+        if col in COLONNES_BINAIRES:
+            accident[col] = np.random.choice([0, 1])
+        elif col == COLONNE_HORAIRE:
+            accident[col] = np.random.choice([1, 2, 3, 4])
+        elif col.startswith(PREFIXES_ONE_HOT):
+            accident[col] = 0  # sera corrigé juste après (one-hot)
+        else:
+            # On tire une VRAIE valeur observée dans X_train pour cette colonne,
+            # plutôt qu'un intervalle arbitraire — garantit une valeur réaliste
+            # et une vraie diversité, quelle que soit l'échelle propre à chaque
+            # colonne encodée.
+            accident[col] = X_train[col].sample(n=1).values[0]
 
     # One-hot corrections
     cats = ["categorie_usager_1", "categorie_usager_2", "categorie_usager_3"]
@@ -90,5 +105,4 @@ def generer_accident(secu, collision, age, manoeuvre, obstacle_mobile):
 
     df_accident = pd.DataFrame([accident])
     df_accident = df_accident[X_train.columns]
-
     return df_accident
