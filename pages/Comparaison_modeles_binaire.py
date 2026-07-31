@@ -190,7 +190,9 @@ ax.set_title("Feature Importance — Modèle r6", fontsize=9)
 ax.tick_params(axis="y", labelsize=5)
 ax.tick_params(axis="x", labelsize=6)
 plt.tight_layout()
-st.pyplot(fig, use_container_width=False)
+col_gauche_fi, col_droite_fi = st.columns([1, 2])
+with col_gauche_fi:
+    st.pyplot(fig, use_container_width=False)
 
 with st.expander("Voir le tableau complet des importances"):
     st.dataframe(fi)
@@ -224,7 +226,9 @@ res_pipeline = evaluer_modele(
     X_graves, y_graves, ax,
     labels=("Hospitalisé", "Tué")
 )
-st.pyplot(fig, use_container_width=False)
+col_gauche, col_droite = st.columns([1, 2])
+with col_gauche:
+    st.pyplot(fig, use_container_width=False)
 
 st.subheader("Résultat — Pipeline Grave")
 st.dataframe(pd.DataFrame([res_pipeline]))
