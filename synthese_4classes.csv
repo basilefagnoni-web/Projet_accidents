@@ -1,0 +1,6 @@
+Modèle,Accuracy,Macro F1,Recall Indemne,Recall Tué,Recall Hospitalisé,Recall Blessé léger
+Balanced Random Forest,0.59,0.4755,0.8251,0.6547,0.358,0.435
+Decision Tree (balanced),0.5687,0.4563,0.7553,0.5975,0.329,0.4685
+Régression logistique (balanced),0.5411,0.4238,0.782,0.5906,0.2675,0.3973
+XGBoost (multi-classes),0.6729,0.5079,0.8177,0.09,0.393,0.6719
+Dummy (most_frequent),0.4129,0.1461,1.0,0.0,0.0,0.0
